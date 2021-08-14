@@ -18,6 +18,8 @@
 		i2c0 = &i2c0;
 		i2c1 = &i2c1;
 		serial1 = &uart1;
+		serial2 = &uart3;
+		serial3 = &uart4;
 	};
 
 	chosen {
@@ -82,34 +84,79 @@
 		pinctrl-0 = <&pinctrl_key_gpio_default>;
 		status = "okay";
 
-		sw1 {
-			label = "SW1";
+		ocd {
+			label = "OCD";
+			gpios = <&pioA 28 GPIO_ACTIVE_LOW>;
+			linux,code=<100>;
+		};
+
+		shutdown {
+			label = "SHUTDOWN";
+			gpios = <&pioA 22 GPIO_ACTIVE_LOW>;
+			linux,code=<101>;
+		};
+
+		cfg1 {
+			label = "CFG1";
+			gpios = <&pioC 15 GPIO_ACTIVE_LOW>;
+			linux,code=<102>;
+		};
+
+		cfg2 {
+			label = "CFG2";
 			gpios = <&pioD 18 GPIO_ACTIVE_LOW>;
-			linux,code=<KEY_PROG1>;
-			wakeup-source;
+			linux,code=<103>;
 		};
 	};
 
 	leds {
 		compatible = "gpio-leds";
-		status = "okay"; /* Conflict with pwm0. */
+		status = "ok";
 
-		red {
-			label = "red";
-			gpios = <&pioB 11 GPIO_ACTIVE_HIGH>;
+		eth {
+			label = "eth";
+			gpios = <&pioB 13 GPIO_ACTIVE_HIGH>;
 		};
 
-		green {
-			label = "green";
-			gpios = <&pioB 12 GPIO_ACTIVE_HIGH>;
+		run {
+			label = "run";
+			gpios = <&pioB 19 GPIO_ACTIVE_HIGH>;
 		};
 
+		cmode {
+			label = "cmode";
+			gpios = <&pioC 1 GPIO_ACTIVE_HIGH>;
+		};
+
+		duplex {
+			label = "duplex";
+			gpios = <&pioC 14 GPIO_ACTIVE_HIGH>;
+		};
+
+		/*
+		mrts {
+			label = "mrts";
+			gpios = <&pioC 24 GPIO_ACTIVE_HIGH>;
+		};
+
+		hrts {
+			label = "hrts";
+			gpios = <&pioC 27 GPIO_ACTIVE_HIGH>;
+		};
+
+		nrst {
+			label = "nrst";
+			gpios = <&pioB 25 GPIO_ACTIVE_LOW>;
+		};
+		
 		blue {
 			label = "blue";
 			gpios = <&pioB 13 GPIO_ACTIVE_HIGH>;
 			linux,default-trigger = "heartbeat";
 		};
+		*/
 	};
+
 };
 
 &adc {
@@ -117,7 +164,7 @@
 	vref-supply = <&vdd1_3v3>;
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_adc_default &pinctrl_adtrg_default>;
-	status = "okay";
+	status = "disabled"; /*"okay";*/
 };
 
 &can0 {
@@ -129,7 +176,7 @@
 &can1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_can1_rx_tx>;
-	status = "okay";
+	status = "disabled"; /*"okay";*/
 };
 
 &classd {
@@ -137,7 +184,7 @@
 	pinctrl-0 = <&pinctrl_classd_default>;
 	atmel,pwm-type = "diff";
 	atmel,non-overlap-time = <10>;
-	status = "okay";
+	status = "disabled"; /*"okay";*/
 };
 
 &dbgu {
@@ -192,19 +239,14 @@
 					reg = <0x140000 0x40000>;
 				};
 
-				dtb@180000 {
-					label = "device tree";
-					reg = <0x180000 0x80000>;
-				};
-
-				kernel@200000 {
-					label = "kernel";
-					reg = <0x200000 0x600000>;
+				fit@180000 {
+					label = "flalttened image tree";
+					reg = <0x180000 0x680000>;
 				};
 
 				rootfs@800000 {
 					label = "rootfs";
-					reg = <0x800000 0x1f800000>;
+					reg = <0x800000 0xf800000>;
 				};
 			};
 		};
@@ -237,9 +279,91 @@
 			size = <128>;
 			status = "okay";
 		};
+
+		temp@1f {
+			compatible = "jedec,jc-42.4-temp";
+			reg = <0x1F>;
+			status = "okay";
+		};
 	};
 };
 
+&flx1 {
+	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
+	status = "okay";
+
+	uart1: serial@200 {
+		compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+		reg = <0x200 0x200>;
+		interrupts = <6 IRQ_TYPE_LEVEL_HIGH 7>;
+		dmas = <&dma0
+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+			 AT91_XDMAC_DT_PERID(2))>,
+		       <&dma0
+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+			 AT91_XDMAC_DT_PERID(3))>;
+		dma-names = "tx", "rx";
+		clocks = <&pmc PMC_TYPE_PERIPHERAL 6>;
+		clock-names = "usart";
+		pinctrl-0 = <&pinctrl_flx1_default>;
+		pinctrl-names = "default";
+		/* atmel,use-dma-rx; */
+		/* atmel,use-dma-tx; */
+		status = "okay";
+	};
+};
+
+&flx3 {
+	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
+	status = "okay";
+
+	uart3: serial@200 {
+		compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+		reg = <0x200 0x200>;
+		interrupts = <8 IRQ_TYPE_LEVEL_HIGH 7>;
+		dmas = <&dma0
+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+			 AT91_XDMAC_DT_PERID(6))>,
+		       <&dma0
+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+			 AT91_XDMAC_DT_PERID(7))>;
+		dma-names = "tx", "rx";
+		clocks = <&pmc PMC_TYPE_PERIPHERAL 8>;
+		clock-names = "usart";
+		pinctrl-0 = <&pinctrl_flx3_default>;
+		pinctrl-names = "default";
+		atmel,use-dma-rx;
+		atmel,use-dma-tx;
+		status = "okay";
+	};
+};
+
+&flx4 {
+	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
+	status = "okay";
+
+	uart4: serial@200 {
+		compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
+		reg = <0x200 0x200>;
+		interrupts = <13 IRQ_TYPE_LEVEL_HIGH 7>;
+		dmas = <&dma0
+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+			 AT91_XDMAC_DT_PERID(8))>,
+		       <&dma0
+			(AT91_XDMAC_DT_MEM_IF(0) | AT91_XDMAC_DT_PER_IF(1) |
+			 AT91_XDMAC_DT_PERID(9))>;
+		dma-names = "tx", "rx";
+		clocks = <&pmc PMC_TYPE_PERIPHERAL 13>;
+		clock-names = "usart";
+		pinctrl-0 = <&pinctrl_flx4_default>;
+		pinctrl-names = "default";
+		atmel,use-dma-rx;
+		atmel,use-dma-tx;
+		status = "okay";
+	};
+};
+
+/*
 &flx4 {
 	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_SPI>;
 	status = "disabled";
@@ -258,10 +382,12 @@
 		status = "disabled";
 	};
 };
+*/
 
+/*
 &flx5 {
 	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
-	status = "okay";
+	status = "disabled";
 
 	uart1: serial@200 {
 		compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
@@ -283,10 +409,11 @@
 		status = "okay";
 	};
 };
+*/
 
 &flx6 {
 	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_TWI>;
-	status = "okay";
+	status = "disabled"; /*"okay";*/
 
 	i2c1: i2c@600 {
 		compatible = "microchip,sam9x60-i2c";
@@ -440,6 +567,31 @@
 				 AT91_PIOA 1 AT91_PERIPH_A AT91_PINCTRL_PULL_UP>;
 		};
 
+		pinctrl_flx1_default: flx_uart1 {
+			atmel,pins =
+				<AT91_PIOC 27 AT91_PERIPH_C AT91_PINCTRL_NONE      /* RTS */
+				 AT91_PIOC 28 AT91_PERIPH_C AT91_PINCTRL_NONE      /* CTS */
+				 AT91_PIOA  6 AT91_PERIPH_A AT91_PINCTRL_NONE      /* RX  */
+				 AT91_PIOA  5 AT91_PERIPH_A AT91_PINCTRL_NONE>;    /* TX  */
+		};
+
+		pinctrl_flx3_default: flx_uart3 {
+			atmel,pins =
+				<AT91_PIOC 24 AT91_PERIPH_B AT91_PINCTRL_NONE      /* RTS */
+				 AT91_PIOC 25 AT91_PERIPH_B AT91_PINCTRL_NONE      /* CTS */
+				 AT91_PIOC 23 AT91_PERIPH_B AT91_PINCTRL_NONE      /* RX  */
+				 AT91_PIOC 22 AT91_PERIPH_B AT91_PINCTRL_NONE>;    /* TX  */
+		};
+
+		pinctrl_flx4_default: flx_uart4 {
+			atmel,pins =
+				<AT91_PIOA  7 AT91_PERIPH_B AT91_PINCTRL_NONE      /* RTS */
+				 AT91_PIOA 14 AT91_PERIPH_A AT91_PINCTRL_NONE      /* CTS */
+				 AT91_PIOA 11 AT91_PERIPH_A AT91_PINCTRL_NONE      /* RX  */
+				 AT91_PIOA 12 AT91_PERIPH_A AT91_PINCTRL_NONE>;    /* TX  */
+		};
+
+		/*
 		pinctrl_flx4_default: flx4_spi {
 			atmel,pins =
 				<AT91_PIOA 11 AT91_PERIPH_A AT91_PINCTRL_NONE
@@ -447,7 +599,9 @@
 				 AT91_PIOA 13 AT91_PERIPH_A AT91_PINCTRL_NONE
 				 AT91_PIOA 14 AT91_PERIPH_A AT91_PINCTRL_NONE>;
 		};
+		*/
 
+		/*
 		pinctrl_flx5_default: flx_uart {
 			atmel,pins =
 				<AT91_PIOA 7 AT91_PERIPH_C AT91_PINCTRL_NONE
@@ -455,7 +609,8 @@
 				 AT91_PIOA 21 AT91_PERIPH_B AT91_PINCTRL_NONE
 				 AT91_PIOA 22 AT91_PERIPH_B AT91_PINCTRL_NONE>;
 		};
-
+		*/
+		
 		pinctrl_flx6_default: flx6_twi {
 			atmel,pins =
 				<AT91_PIOA 30 AT91_PERIPH_A AT91_PINCTRL_PULL_UP
@@ -467,9 +622,9 @@
 		pinctrl_classd_default: classd {
 			atmel,pins =
 				<AT91_PIOA 24 AT91_PERIPH_C AT91_PINCTRL_PULL_UP
-				 AT91_PIOA 25 AT91_PERIPH_C AT91_PINCTRL_PULL_DOWN
+				 AT91_PIOA 25 AT91_PERIPH_C AT91_PINCTRL_PULL_UP
 				 AT91_PIOA 26 AT91_PERIPH_C AT91_PINCTRL_PULL_UP
-				 AT91_PIOA 27 AT91_PERIPH_C AT91_PINCTRL_PULL_DOWN>;
+				 AT91_PIOA 27 AT91_PERIPH_C AT91_PINCTRL_PULL_UP>;
 		};
 	};
 
@@ -553,20 +708,16 @@
 
 	gpio_keys {
 		pinctrl_key_gpio_default: pinctrl_key_gpio {
-			atmel,pins = <AT91_PIOD 18 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
+			atmel,pins = <AT91_PIOA 22 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
+			              AT91_PIOA 28 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
+			              AT91_PIOC 15 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP
+			              AT91_PIOD 18 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
 		};
 	};
 
 	usb0 {
 		pinctrl_usba_vbus: usba_vbus {
 			atmel,pins = <AT91_PIOB 16 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
-		};
-	};
-
-	usb1 {
-		pinctrl_usb_default: usb_default {
-			atmel,pins = <AT91_PIOD 15 AT91_PERIPH_GPIO AT91_PINCTRL_NONE
-				      AT91_PIOD 16 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
 		};
 	};
 }; /* pinctrl */
@@ -584,6 +735,7 @@
 	status = "okay";
 	cd-gpios = <&pioA 23 GPIO_ACTIVE_LOW>;
 	disable-wp;
+	status = "disabled";
 };
 
 &sdmmc1 {
@@ -598,7 +750,7 @@
 &qspi {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_qspi>;
-	status = "okay"; /* Conflict with i2s. */
+	status = "disabled"; /*"okay";*/ /* Conflict with i2s. */
 
 	flash@0 {
 		#address-cells = <1>;
@@ -680,13 +832,11 @@
 	atmel,vbus-gpio = <0
 			   &pioD 15 GPIO_ACTIVE_HIGH
 			   &pioD 16 GPIO_ACTIVE_HIGH>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&pinctrl_usb_default>;
-	status = "okay";
+	status = "disabled"; /*"okay";*/
 };
 
 &usb2 {
-	status = "okay";
+	status = "disabled"; /*"okay";*/
 };
 
 &watchdog {
