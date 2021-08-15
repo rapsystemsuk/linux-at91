@@ -84,29 +84,33 @@
 		pinctrl-0 = <&pinctrl_key_gpio_default>;
 		status = "okay";
 
+		/*
 		ocd {
 			label = "OCD";
 			gpios = <&pioA 28 GPIO_ACTIVE_LOW>;
 			linux,code=<100>;
 		};
-
+		*/
+		
 		shutdown {
-			label = "SHUTDOWN";
+			label = "SW-SHUTDOWN";
 			gpios = <&pioA 22 GPIO_ACTIVE_LOW>;
-			linux,code=<101>;
+			linux,code=<116>;
 		};
 
+		/*
 		cfg1 {
-			label = "CFG1";
+			label = "SW-CFG1";
 			gpios = <&pioC 15 GPIO_ACTIVE_LOW>;
-			linux,code=<102>;
+			linux,code=<59>;
 		};
 
 		cfg2 {
-			label = "CFG2";
+			label = "SW-CFG2";
 			gpios = <&pioD 18 GPIO_ACTIVE_LOW>;
-			linux,code=<103>;
+			linux,code=<60>;
 		};
+		*/
 	};
 
 	leds {
@@ -114,15 +118,16 @@
 		status = "ok";
 
 		eth {
-			label = "eth";
+			label = "LED-ETH";
 			gpios = <&pioB 13 GPIO_ACTIVE_HIGH>;
 		};
 
 		run {
-			label = "run";
+			label = "LED-RUN";
 			gpios = <&pioB 19 GPIO_ACTIVE_HIGH>;
 		};
 
+		/*
 		cmode {
 			label = "cmode";
 			gpios = <&pioC 1 GPIO_ACTIVE_HIGH>;
@@ -133,7 +138,6 @@
 			gpios = <&pioC 14 GPIO_ACTIVE_HIGH>;
 		};
 
-		/*
 		mrts {
 			label = "mrts";
 			gpios = <&pioC 24 GPIO_ACTIVE_HIGH>;
