@@ -146,6 +146,8 @@ static int atmel_ebi_xslate_smc_timings(struct atmel_ebi_dev *ebid,
 				break;
 		}
 
+		dev_warn(ebid->ebi->dev, "%s == %u\n", xlate->name, val);
+
 		if (!required) {
 			ret = -EINVAL;
 			break;
