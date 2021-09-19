@@ -218,6 +218,18 @@
 			nand-on-flash-bbt;
 			label = "atmel_nand";
 
+            atmel,smc-ncs-rd-setup-ns = <30>;
+            atmel,smc-nrd-setup-ns = <0>;
+            atmel,smc-ncs-wr-setup-ns = <30>;
+            atmel,smc-nwe-setup-ns = <0>;
+            atmel,smc-ncs-rd-pulse-ns = <20>;
+            atmel,smc-nrd-pulse-ns = <20>;
+            atmel,smc-ncs-wr-pulse-ns = <20>;
+            atmel,smc-nwe-pulse-ns = <20>;
+            atmel,smc-nwe-cycle-ns = <35>;
+            atmel,smc-nrd-cycle-ns = <35>;
+            atmel,smc-tdf-ns = <35>;
+
 			partitions {
 				compatible = "fixed-partitions";
 				#address-cells = <1>;

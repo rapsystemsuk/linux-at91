@@ -18,6 +18,7 @@
 
 #include "at91sam9_smc.h" 
 
+#if 0
 static void flash_setup( void )
 {
 	struct	at91_smc * smc = (struct at91_smc * )ATMEL_BASE_SMC;
@@ -37,6 +38,7 @@ static void flash_setup( void )
 	       AT91_SMC_MODE_TDF | AT91_SMC_MODE_TDF_CYCLE(20),		// 15
 	       &smc->cs[3].mode);
 }
+#endif
 
 static void __init sam9x60_init(void)
 {
@@ -44,7 +46,7 @@ static void __init sam9x60_init(void)
 
 	sam9x60_pm_init();
 
-	flash_setup( );
+	//flash_setup( );
 }
 
 static const char *const sam9x60_dt_board_compat[] __initconst = {
