@@ -311,6 +311,8 @@ static int atmel_ebi_dev_setup(struct atmel_ebi *ebi, struct device_node *np,
 	bool apply = false;
 	u32 cs;
 
+	dev_info(dev, "atmel_ebi_dev_setup()\n");
+
 	nentries = of_property_count_elems_of_size(np, "reg",
 						   reg_cells * sizeof(u32));
 	for (i = 0; i < nentries; i++) {
@@ -526,6 +528,8 @@ static int atmel_ebi_probe(struct platform_device *pdev)
 	int ret, reg_cells;
 	struct clk *clk;
 	u32 val;
+
+	dev_info(dev, "atmel_ebi_probe()\n");
 
 	match = of_match_device(atmel_ebi_id_table, dev);
 	if (!match || !match->data)
