@@ -202,18 +202,6 @@
 	pinctrl-0 = <&pinctrl_ebi_addr_nand &pinctrl_ebi_data_0_7>;
 	status = "okay";
 
-    atmel,smc-ncs-rd-setup-ns = <80>;
-    atmel,smc-nrd-setup-ns = <0>;
-    atmel,smc-ncs-wr-setup-ns = <80>;
-    atmel,smc-nwe-setup-ns = <0>;
-    atmel,smc-ncs-rd-pulse-ns = <80>;
-    atmel,smc-nrd-pulse-ns = <80>;
-    atmel,smc-ncs-wr-pulse-ns = <80>;
-    atmel,smc-nwe-pulse-ns = <80>;
-    atmel,smc-nwe-cycle-ns = <80>;
-    atmel,smc-nrd-cycle-ns = <80>;
-    atmel,smc-tdf-ns = <80>;
-
 	nand_controller: nand-controller {
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_nand_oe_we &pinctrl_nand_cs &pinctrl_nand_rb>;
@@ -243,7 +231,7 @@
             atmel,smc-nrd-cycle-ns = <80>;
             atmel,smc-tdf-ns = <80>;
 			*/
-
+			
 			partitions {
 				compatible = "fixed-partitions";
 				#address-cells = <1>;

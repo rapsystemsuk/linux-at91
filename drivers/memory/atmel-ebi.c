@@ -311,7 +311,7 @@ static int atmel_ebi_dev_setup(struct atmel_ebi *ebi, struct device_node *np,
 	bool apply = false;
 	u32 cs;
 
-	dev_info(dev, "atmel_ebi_dev_setup()\n");
+	pr_notice("rap: atmel_ebi_dev_setup()\n");
 
 	nentries = of_property_count_elems_of_size(np, "reg",
 						   reg_cells * sizeof(u32));
@@ -529,7 +529,7 @@ static int atmel_ebi_probe(struct platform_device *pdev)
 	struct clk *clk;
 	u32 val;
 
-	dev_info(dev, "atmel_ebi_probe()\n");
+	pr_notice("rap: atmel_ebi_probe()\n");
 
 	match = of_match_device(atmel_ebi_id_table, dev);
 	if (!match || !match->data)
@@ -600,9 +600,21 @@ static int atmel_ebi_probe(struct platform_device *pdev)
 
 	reg_cells += val;
 
+	pr_notice("rap: atmel_ebi_probe - Looking for child nodes()\n");
+
 	for_each_available_child_of_node(np, child) {
+
+		pr_notice("rap: atmel_ebi_probe - Child %s\n", child->name);
+
 		if (!of_find_property(child, "reg", NULL))
+		{
+			pr_notice("rap: atmel_ebi_probe - Child %s - no reg!\n", child->name);
 			continue;
+		}
+		else
+		{
+			pr_notice("rap: atmel_ebi_probe - Child %s - found reg!\n", child->name);
+		}
 
 		ret = atmel_ebi_dev_setup(ebi, child, reg_cells);
 		if (ret) {
