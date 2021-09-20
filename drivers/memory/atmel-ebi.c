@@ -118,6 +118,8 @@ static int atmel_ebi_xslate_smc_timings(struct atmel_ebi_dev *ebid,
 	int ret, i;
 	u32 val;
 
+	dev_warn(ebid->ebi->dev, "atmel_ebi_xslate_smc_timings()\n");
+
 	ret = of_property_read_u32(np, "atmel,smc-tdf-ns", &val);
 	if (!ret) {
 		required = true;
@@ -179,6 +181,8 @@ static int atmel_ebi_xslate_smc_config(struct atmel_ebi_dev *ebid,
 	const char *tmp_str;
 	u32 tmp;
 	int ret;
+
+    dev_err(ebid->ebi->dev, "atmel_ebi_xslate_smc_config()");
 
 	ret = of_property_read_u32(np, "atmel,smc-bus-width", &tmp);
 	if (!ret) {
