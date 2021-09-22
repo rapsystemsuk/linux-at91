@@ -63,7 +63,7 @@ static const struct nand_interface_config onfi_sdr_timings[] = {
 			.tWHR_min = 120000,
 			.tWP_min = 50000,
 			.tWW_min = 100000,
-		},
+		}
 	},
 	/* Mode 1 */
 	{
@@ -295,7 +295,7 @@ static const struct nand_interface_config onfi_sdr_timings[] = {
 /* All NAND chips share the same reset data interface: SDR mode 0 */
 const struct nand_interface_config *nand_get_reset_interface_config(void)
 {
-	return &onfi_sdr_timings[0];
+	return &onfi_sdr_timings[2];
 }
 
 /**
