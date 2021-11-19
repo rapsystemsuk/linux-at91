@@ -804,7 +804,7 @@ static int nand_setup_interface(struct nand_chip *chip, int chipnr)
 	 * nand_setup_interface() uses ->set/get_features() which would
 	 * fail anyway as the parameter page is not available yet.
 	 */
-	//if (!chip->best_interface_config)
+	if (!chip->best_interface_config)
 		return 0;
 
 	tmode_param[0] = chip->best_interface_config->timings.mode;
