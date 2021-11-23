@@ -19,7 +19,7 @@
 		i2c1 = &i2c1;
 		serial1 = &uart1;
 		serial2 = &uart3;
-		serial3 = &uart4;
+		/* serial3 = &uart4; */
 	};
 
 	chosen {
@@ -358,7 +358,7 @@
 
 &flx4 {
 	atmel,flexcom-mode = <ATMEL_FLEXCOM_MODE_USART>;
-	status = "okay";
+	status = "disabled";
 
 	uart4: serial@200 {
 		compatible = "microchip,sam9x60-usart", "atmel,at91sam9260-usart";
